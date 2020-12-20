@@ -9,8 +9,7 @@
 #endif
 
 class saVet2f {
-    public:
-
+public:
     double x, y;
 
     saVet2f(void);

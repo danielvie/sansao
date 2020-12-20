@@ -1,64 +1,77 @@
 #include "saVet3f.h"
 
-struct saVet3f saVet3f::add(const struct saVet3f& other) {
-	struct saVet3f res;
+saVet3f::saVet3f()
+	:x(0.), y(0.), z(0.)
+{
+}
+
+saVet3f::saVet3f(double x_, double y_, double z_)
+	:x(x_), y(y_), z(z_)
+{
+}
+
+saVet3f saVet3f::add(const saVet3f& other) 
+{
+	saVet3f res;
 	res.x = x + other.x;
 	res.y = y + other.y;
 	res.z = z + other.z;
 	return res;
 }
 
-struct saVet3f saVet3f::subtract(const struct saVet3f& other) {
-	struct saVet3f res;
+saVet3f saVet3f::subtract(const saVet3f& other) 
+{
+	saVet3f res;
 	res.x = x - other.x;
 	res.y = y - other.y;
 	res.z = z - other.z;
 	return res;
 }
 
-struct saVet3f saVet3f::mul(double value) {
-	struct saVet3f res;
+saVet3f saVet3f::mul(double value) 
+{
+	saVet3f res;
 	res.x = x * value;
 	res.y = y * value;
 	res.z = z * value;
 	return res;
 }
 
-struct saVet3f saVet3f::div(double value)
+saVet3f saVet3f::div(double value)
 {
-	struct saVet3f res;
+	saVet3f res;
 	res.x = x / value;
 	res.y = y / value;
 	res.z = z / value;
 	return res;
 }
 
-struct saVet3f saVet3f::mul(const struct saVet3f& other)
+saVet3f saVet3f::mul(const saVet3f& other)
 {
-	struct saVet3f res;
+	saVet3f res;
 	res.x = x * other.x;
 	res.y = y * other.y;
 	res.z = z * other.z;
 	return res;
 }
 
-struct saVet3f saVet3f::div(const struct saVet3f& other)
+saVet3f saVet3f::div(const saVet3f& other)
 {
-	struct saVet3f res;
+	saVet3f res;
 	res.x = x / other.x;
 	res.y = y / other.y;
 	res.z = z / other.z;
 	return res;
 }
 
-double saVet3f::dot(const struct saVet3f& other)
+double saVet3f::dot(const saVet3f& other)
 {
 	return x*other.x + y*other.y + z*other.z;
 }
 
-struct saVet3f saVet3f::cross(const struct saVet3f& other)
+saVet3f saVet3f::cross(const saVet3f& other)
 {
-	struct saVet3f res;
+	saVet3f res;
 
 	res.x = y*other.z - other.y*z;
 	res.y = z*other.x - other.z*x;
@@ -72,50 +85,51 @@ double saVet3f::norm(void)
 	return sqrt(this->dot(*this));
 }
 
-double saVet3f::angle_rad(const struct saVet3f& other)
+double saVet3f::angle_rad(const saVet3f& other)
 {
 	double ang = 0.0;
-	struct saVet3f v2 = other;
+	saVet3f v2 = other;
 	
 	// calculo valor do angulo
 	ang = acos(this->dot(v2)/this->norm()/v2.norm());
 
 	// ajuste de sinal
-	if (this->cross(v2).z < 0.0) {
+	if (this->cross(v2).z < 0.0) 
+	{
 		ang = -ang;
 	}
 
 	return ang;
 }
 
-double saVet3f::angle_deg(const struct saVet3f& other)
+double saVet3f::angle_deg(const saVet3f& other)
 {
 	double ang = this->angle_rad(other)*180./M_PI;
 
 	return ang;
 }
 
-double saVet3f::dist(const struct saVet3f& other)
+double saVet3f::dist(const saVet3f& other)
 {
 	double dist = this->subtract(other).norm();
 	return dist;
 }
 
-struct saVet3f saVet3f::normalize(void)
+saVet3f saVet3f::normalize(void)
 {
 	return this->mul(1./this->norm());
 }
 
-struct saVet3f saVet3f::scale(double size)
+saVet3f saVet3f::scale(double size)
 {
 	return this->normalize()*size;
 }
 
-struct saVet3f saVet3f::rotate_rad(double angle, int axis)
+saVet3f saVet3f::rotate_rad(double angle, int axis)
 {
 	// TODO: testar casos de rotacao para validar
 	
-	struct saVet3f vet = {0.,0.,0.};
+	saVet3f vet = {0.,0.,0.};
 
 	if (axis == 1)
 	{
@@ -139,37 +153,37 @@ struct saVet3f saVet3f::rotate_rad(double angle, int axis)
 	return vet;
 }
 
-struct saVet3f saVet3f::rotate_deg(double angle, int axis)
+saVet3f saVet3f::rotate_deg(double angle, int axis)
 {
 	return this->rotate_rad(angle*M_PI/180., axis);
 }
 
-struct saVet3f saVet3f::operator+(const struct saVet3f& other)
+saVet3f saVet3f::operator+(const saVet3f& other)
 {
 	return this->add(other);
 }
 
-struct saVet3f saVet3f::operator-(const struct saVet3f& other)
+saVet3f saVet3f::operator-(const saVet3f& other)
 {
 	return this->subtract(other);
 }
 
-struct saVet3f saVet3f::operator*(double value)
+saVet3f saVet3f::operator*(double value)
 {
 	return this->mul(value);
 }
 
-struct saVet3f saVet3f::operator/(double value)
+saVet3f saVet3f::operator/(double value)
 {
 	return this->div(value);
 }
 
-struct saVet3f saVet3f::operator*(const struct saVet3f& other)
+saVet3f saVet3f::operator*(const saVet3f& other)
 {
 	return this->mul(other);
 }
 
-struct saVet3f saVet3f::operator/(const struct saVet3f& other)
+saVet3f saVet3f::operator/(const saVet3f& other)
 {
 	return this->div(other);
 }

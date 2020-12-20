@@ -19,6 +19,10 @@ public:
               double _g, double _h, double _i );
     
     void set( int32_t i, int32_t j, double value);
+    
+    void set_row( int8_t i, double a, double b, double c);
+    void set_col( int8_t i, double a, double b, double c);
+
     double& get( int32_t i, int32_t j);
     
     void transpose();

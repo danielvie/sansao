@@ -5,8 +5,8 @@
  *      Author: User
  */
 
-#ifndef SANSAO_H_
-#define SANSAO_H_
+#ifndef __SANSAO_H__
+#define __SANSAO_H__
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384
@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include "saMat3.h"
+#include "saMat4.h"
 #include "saVet2f.h"
 #include "saVet3f.h"
 
@@ -27,4 +28,4 @@ public:
      static int sinal(double nro);
 };
 
-#endif /* SANSAO_H_ */
+#endif /* __SANSAO_H__ */

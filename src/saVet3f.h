@@ -8,31 +8,35 @@
 #define M_PI 3.1415926535897932384
 #endif
 
-struct saVet3f {
+class saVet3f {
+public:
     double x, y, z;
 
-    struct saVet3f add(const struct saVet3f& other);
-    struct saVet3f subtract(const struct saVet3f& other);
-    struct saVet3f mul(double value);
-    struct saVet3f div(double value);
-    struct saVet3f mul(const struct saVet3f& other);
-    struct saVet3f div(const struct saVet3f& other);
-    double dot(const struct saVet3f& other);
-    struct saVet3f cross(const struct saVet3f& other);
-    double angle_rad(const struct saVet3f& other);
-    double angle_deg(const struct saVet3f& other);
+    saVet3f();
+    saVet3f(double x_, double y_, double z_);
+
+    saVet3f add(const saVet3f& other);
+    saVet3f subtract(const saVet3f& other);
+    saVet3f mul(double value);
+    saVet3f div(double value);
+    saVet3f mul(const saVet3f& other);
+    saVet3f div(const saVet3f& other);
+    double dot(const saVet3f& other);
+    saVet3f cross(const saVet3f& other);
+    double angle_rad(const saVet3f& other);
+    double angle_deg(const saVet3f& other);
     double norm(void);
-    double dist(const struct saVet3f& other);
-    struct saVet3f normalize(void);
-    struct saVet3f scale(double size);
-    struct saVet3f rotate_rad(double angle, int axis);
-    struct saVet3f rotate_deg(double angle, int axis);
-    struct saVet3f operator+(const struct saVet3f& other);
-    struct saVet3f operator-(const struct saVet3f& other);
-    struct saVet3f operator*(double value);
-    struct saVet3f operator/(double value);
-    struct saVet3f operator*(const struct saVet3f& other);
-    struct saVet3f operator/(const struct saVet3f& other);
+    double dist(const saVet3f& other);
+    saVet3f normalize(void);
+    saVet3f scale(double size);
+    saVet3f rotate_rad(double angle, int axis);
+    saVet3f rotate_deg(double angle, int axis);
+    saVet3f operator+(const saVet3f& other);
+    saVet3f operator-(const saVet3f& other);
+    saVet3f operator*(double value);
+    saVet3f operator/(double value);
+    saVet3f operator*(const saVet3f& other);
+    saVet3f operator/(const saVet3f& other);
     double operator[](int idx);
     void p(void);
 };

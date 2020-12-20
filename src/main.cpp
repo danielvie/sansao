@@ -2,7 +2,8 @@
 #include <cmath>
 
 // #include "saVet2f.h"
-// #include "saVet3f.h"
+#include "saVet3f.h"
+#include "saMat4.h"
 #include "saMat3.h"
 // #include "saMat.h"
 
@@ -15,26 +16,32 @@
 int main(int argc, char const *argv[]) 
 {
 
-	saMat3 m1;
+	saMat4 m1;
 
-	m1.set(1,3,2,5,6,7,89,9,34);
-	
-	saMat3 r = m1.transpose(m1);
-	m1.p("m1()");
-	r.p("r.transpose()");
-	
-	r.inv();
-	r.p("r.inv()");
-	
-	r += m1;
+	int cont = 0;
+	for (int8_t i = 0; i < 4; i++) 
+    {
+        for (int8_t j = 0; j < 4; j++) 
+        {
+            m1[j][i] = (double)(cont++);
+        }
+    }
 
-	r.p("r += m1");
+	m1.set_row(0,  1,0,2,2);
+	m1.set_row(1,  0,2,1,0);
+	m1.set_row(2,  0,1,0,1);
+	m1.set_row(3,  1,2,1,4);
 
-	m1.p("bla");
-	for (size_t i = 0; i < 20; i++)
-	{
-		printf("(%i): %f\n", i, m1[i]);
-	}
+	saMat3 m2;
+
+	m2.set_row(0,  1,2,3);
+	m2.set_row(1,  4,5,6);
+	m2.set_row(2,  7,8,9);
+
+	m2.p("m2");
+
+	saVet3f v1;
+
 	
 
 	return 0;
