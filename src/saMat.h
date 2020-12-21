@@ -12,39 +12,51 @@ public:
     // propriedades
     int32_t m_lin;
     int32_t m_col;
-    std::vector<double> *m_data;
+    std::vector<double> m_data;
 
     // metodos
-    saMat(void);
-    saMat(const saMat& other);
-    saMat(int32_t lin, int32_t col);
-    saMat(int32_t lin, int32_t col, double value);
-    saMat(int32_t lin, int32_t col, const std::vector<double>& values);
+    saMat();
+    saMat(int32_t m_lin, int32_t m_col);
+    saMat(int32_t m_lin, int32_t m_col, double value);
     ~saMat();
 
-    void init(int32_t lin, int32_t col, double value);
-
     void set(int32_t i, int32_t j, double value);
-    void set(int32_t i, double value);
+    int32_t set_row(int32_t idx, std::vector<double> row);
+    int32_t set_col(int32_t idx, std::vector<double> col);
+
     double get(int32_t i, int32_t j);
-    double get(int32_t i);
+
     int32_t numel(void);
-    
-    saMat mul(const saMat& other);
-    saMat mul(double value);
 
     saMat add(const saMat& other);
     saMat subtract(const saMat& other);
-    saMat col_stack(const saMat& other);
-    saMat transpose(void);
+    saMat mul(double scalar);
+    saMat divide(double scalar);
+    saMat mul(const saMat& other);
+
+    saMat transpose();
+    saMat redu(int32_t i, int32_t j);
+    double det();
+    saMat cof();
+    saMat inv();
     
-    saMat redu(int32_t px, int32_t pj);
-    double det(void);
-    saMat cof(void);
-    saMat inv(void);
+    double& operator[](int32_t index);
+    
+    saMat operator*(double scalar);
+    void operator*=(double scalar);
+    saMat operator*(const saMat& other);
+    
+    saMat operator/(double scalar);
+    void operator/=(double scalar);
+
+    saMat operator+(const saMat& other);
+    void operator+=(const saMat& other);
+    
+    saMat operator-(const saMat& other);
+    void operator-=(const saMat& other);
 
     void p(void);
-    void pdata(void);
+    void p(std::string label);
 };
 
 

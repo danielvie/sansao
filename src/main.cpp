@@ -2,47 +2,27 @@
 #include <cmath>
 
 // #include "saVet2f.h"
-#include "saVet3f.h"
-#include "saMat4.h"
-#include "saMat3.h"
-// #include "saMat.h"
+// #include "saVet3f.h"
+// #include "saMat4.h"
+// #include "saMat3.h"
+#include "saMat.h"
 
-// std::ostream& operator<<(std::ostream& stream, const Vetor3& v)
-// {
-// 	stream << "(" << v.x << ", " << v.y << ", " << v.z << ")";
-// 	return stream;
-// }
+// TESTE DE MATRIZ INVERSA
+// A = [1,0,0,1,0,2,1,2,2,1,0,1,2,0,1,4] -> (4,4)
+// C = [-4,2,-16,6,-1,1,-2,1,2,0,4,-2,1,-1,4,-1] -> (4,4) -> (4,4)
+// I = [-2, -.5, 1, .5, 1, .5, 0, -.5, 8, -1, 2, 2, 3, .5, -1, -.5] -> (4,4)
 
 int main(int argc, char const *argv[]) 
 {
-
-	saMat4 m1;
-
-	int cont = 0;
-	for (int8_t i = 0; i < 4; i++) 
-    {
-        for (int8_t j = 0; j < 4; j++) 
-        {
-            m1[j][i] = (double)(cont++);
-        }
-    }
-
-	m1.set_row(0,  1,0,2,2);
-	m1.set_row(1,  0,2,1,0);
-	m1.set_row(2,  0,1,0,1);
-	m1.set_row(3,  1,2,1,4);
-
-	saMat3 m2;
-
-	m2.set_row(0,  1,2,3);
-	m2.set_row(1,  4,5,6);
-	m2.set_row(2,  7,8,9);
-
-	m2.p("m2");
-
-	saVet3f v1;
-
+	saMat m1(4,4);
 	
+	m1.set_row(0,  {1, 0, 2, 2});
+	m1.set_row(1,  {0, 2, 1, 0});
+	m1.set_row(2,  {0, 1, 0, 1});
+	m1.set_row(3,  {1, 2, 1, 4});
+	
+	m1.cof().p("m1.cof()");
+	m1.inv().p("m1.inv()");
 
 	return 0;
 }

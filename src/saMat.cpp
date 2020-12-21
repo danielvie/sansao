@@ -1,349 +1,318 @@
 #include "saMat.h"
 
-// TODO: concertar problema de memoria, caso de erro:
-// saMat m1(2,2,{10., 12, 1, 4});
-// m1.p();
-// saMat r = m1.mul(1./4);
-// r.p();
-// r = m1.mul(1./4);
-// r.p();
+saMat::saMat()
+    :m_lin(0.), m_col(0.)
+{    
+}
 
-    saMat::saMat(void)
-        :m_lin(0), m_col(0)
+saMat::saMat(int32_t m_lin_, int32_t m_col_)
+    :m_lin(m_lin_), m_col(m_col_)
+{
+    for (int32_t i = 0; i < this->numel(); i++)
     {
-        printf("===============================\n");
-        printf("saMat::saMat(void)\n");
-        printf("===============================\n");
-        m_data = new std::vector<double>;
+        m_data.push_back((double)i);
     }
-    
-    saMat::saMat(const saMat& other)
-        :m_lin(other.m_lin), m_col(other.m_col)
+}
+
+saMat::saMat(int32_t m_lin_, int32_t m_col_, double value)
+    :m_lin(m_lin_), m_col(m_col_)
+{
+    for (int32_t i = 0; i < this->numel(); i++)
     {
-        printf("===============================\n");
-        printf("Copied! saMat::saMat(other)\n");
-        printf("===============================\n");
-        
-        m_data = new std::vector<double>(this->numel(), 0.);
-
-        memcpy(m_data->data(), other.m_data->data(), this->numel()*sizeof(double));
-
+        m_data.push_back(value);
     }
-    
-    saMat::saMat(int32_t lin, int32_t col)
-        :m_lin(lin), m_col(col)
-    {
-        printf("===============================\n");
-        printf("Created! saMat::saMat(lin, col)\n");
-        printf("===============================\n");
+}
 
-        m_data = new std::vector<double>(this->numel(), 0.);
+saMat::~saMat()
+{
+}
+
+int32_t saMat::numel()
+{
+    return m_lin*m_col;
+}
+
+void saMat::set(int32_t i, int32_t j, double value)
+{
+    this->m_data[i + j*m_lin] = value;
+}
+
+int32_t saMat::set_row(int32_t idx, std::vector<double> row)
+{
+    if (m_col != (int32_t)row.size())
+    {
+        printf("numero de elementos nao compativel com set_row\n");
+        return 0;
     }
-    
-    saMat::saMat(int32_t lin, int32_t col, double value)        
-        :m_lin(lin), m_col(col)
-    {
-        printf("===============================\n");
-        printf("Created! saMat::saMat(lin, col, value)\n");
-        printf("===============================\n");
 
-        m_data = new std::vector<double>(this->numel(), value);
+    for ( int32_t i = 0; i < m_col; i++)
+    {
+        this->set(idx, i, row[i]);
     }
-    
-    saMat::saMat(int32_t lin, int32_t col, const std::vector<double>& values)        
-        :m_lin(lin), m_col(col)
-    {
-        printf("===============================\n");
-        printf("Created! saMat::saMat(lin, col, values)\n");
-        printf("===============================\n");
 
-        if (this->numel() != (int32_t)values.size())
+    return 1;
+}
+
+int32_t saMat::set_col(int32_t idx, std::vector<double> col)
+{
+    if (m_lin != (int32_t)col.size())
+    {
+        printf("numero de elementos nao compativel com set_col\n");
+        return 0;
+    }
+
+    for ( int32_t i = 0; i < m_lin; i++)
+    {
+        this->set(i, idx, col[i]);
+    }
+
+    return 1;
+}
+
+double saMat::get(int32_t i, int32_t j)
+{
+    return this->m_data[i + j*m_lin];
+}
+
+saMat saMat::add(const saMat& other)
+{
+    saMat result;
+
+    for (int32_t i = 0; i < result.numel(); i++)
+    {
+        result[i] = this->m_data[i] + other.m_data[i];
+    }
+
+    return result;
+}
+
+saMat saMat::subtract(const saMat& other)
+{
+    saMat result;
+
+    for (int32_t i = 0; i < result.numel(); i++)
+    {
+        result[i] = this->m_data[i] - other.m_data[i];
+    }
+
+    return result;
+}
+
+saMat saMat::mul(double scalar)
+{
+    return (*this)*scalar;
+}
+
+saMat saMat::divide(double scalar)
+{
+    return (*this)/scalar;
+}
+
+saMat saMat::mul(const saMat& other)
+{
+    saMat result(m_lin, other.m_col);
+    saMat other_ = other;
+    double sum=0.;
+
+    for (int i = 0; i < m_lin; i++)
+    {
+        for (int j = 0; j < other.m_col; j++)
         {
-            printf("numero de elementos nao compativel com linhas e colunas!\n");
-            m_data = new std::vector<double>(1, 0.);
-            m_lin  = 1;
-            m_col  = 1;
-
-            return;
-        }
-
-        m_data = new std::vector<double>(this->numel(), 0.);
-        for (int32_t i = 0; i < this->numel(); i++)
-        {
-            this->set(i, values[i]);
-        }
-        
-    }
-    
-    saMat::~saMat()
-    {
-        delete m_data;
-    }
-
-
-    void saMat::init(int32_t lin, int32_t col, double value)
-    {
-        m_lin = lin;
-        m_col = col;
-        
-        delete m_data;
-        m_data = new std::vector<double>(this->numel(), value);
-    }
-    
-    double saMat::get(int32_t i, int32_t j)
-    {
-        return (*m_data)[i + j*m_lin];
-    }
-    
-    double saMat::get(int32_t i)
-    {
-        return (*m_data)[i];
-    }
-    
-    void saMat::set(int32_t i, int32_t j, double value)
-    {
-        (*m_data)[i + j*m_lin] = value;
-    }
-    
-    void saMat::set(int32_t i, double value)
-    {
-        (*m_data)[i] = value;
-    }
-    
-    int32_t saMat::numel(void)
-    {
-        return m_lin*m_col;
-    }
-
-    saMat saMat::mul(const saMat& other)
-    {
-        int32_t i, j, k;
-
-        // verificando se a multiplicacao eh possivel
-        if (m_col != other.m_lin)
-        {
-            printf("erro! matriz nao multiplicavel!\n");
-            saMat mat(1, 1);
-            return mat;
-        }
-
-        saMat mat(m_lin, other.m_col);
-        saMat other_ = other;
-
-        double sum;
-        for (i = 0; i < m_lin; i++)
-        {
-            for (j = 0; j < m_col; j++)
+            sum = 0.;
+            for (int k = 0; k < m_col; k++)
             {
-                sum = 0.0;
-                for (k = 0; k < m_col; k++)
-                {
-                    sum += this->get(i,k) * other_.get(k,j);
-                }
-                mat.set(i,j,sum);
+                sum += (*this).get(i,k) * other_.get(k,j);
             }
+            result.set(i,j, sum);
         }
-
-        return mat;
-    }
-
-    saMat saMat::mul(double value)
-    {
-        saMat mat(*this);
-
-        printf("teste copia\n");
-        this->p();
-        mat.p();
-        printf("fim teste copia\n");
-        for (int32_t i = 0; i < this->numel(); i++)
-        {
-            mat.set(i, this->get(i)*value);
-        }
-        
-        return mat;
-    }
-
-    saMat saMat::add(const saMat& other)
-    {
-        
-        // verificando se a soma eh possivel
-        if ((m_col != other.m_col) || (m_lin != other.m_lin))
-        {
-            printf("erro! matriz nao multiplicavel!\n");
-            saMat mat(1, 1);
-            return mat;
-        }
-
-        saMat mat(m_lin, m_col);
-        for(int32_t i = 0; i < this->numel(); i++)
-        {
-            (*mat.m_data)[i] = (*m_data)[i] + (*other.m_data)[i];
-        }
-
-        return mat;
     }
     
-    saMat saMat::subtract(const saMat& other)
+    return result;
+}
+
+saMat saMat::transpose()
+{
+    saMat result(m_col, m_lin);
+
+    for (int32_t i = 0; i < m_lin; i++) 
     {
-        
-        // verificando se a soma eh possivel
-        if ((m_col != other.m_col) || (m_lin != other.m_lin))
+        for (int32_t j = 0; j < m_col; j++) 
         {
-            printf("erro! matriz nao compativel subtracao!\n");
-            saMat mat(1, 1);
-            return mat;
+            result.set(j,i,  (*this).get(i,j));
         }
-
-        saMat mat(m_lin, m_col);
-        for(int32_t i = 0; i < this->numel(); i++)
-        {
-            (*mat.m_data)[i] = (*m_data)[i] - (*other.m_data)[i];
-        }
-
-        return mat;
     }
+
+    return result;
+}
+
+saMat saMat::redu(int32_t i_, int32_t j_)
+{
+    saMat result(m_lin - 1, m_col - 1);
+    int32_t cont = 0;
+
+    for (int32_t i = 0; i < m_lin; i++) 
+    {
+        if (i == i_) continue;
+        for (int32_t j = 0; j < m_col; j++) 
+        {
+            if (j == j_) continue;
+
+            result[cont++] = this->get(i,j);
+        }
+    }
+    return result.transpose();
+}
+
+double saMat::det()
+{
+    double det = 0.;
+
+    if (this->m_col == 1) 
+    {
+        return (*this)[0];
+    }
+
+    for( int32_t i = 0; i < m_col; i++) 
+    {
+        det += pow(-1., i) * this->get(0,i) * this->redu(0,i).det();
+    }
+
+    return det;
+}
+
+saMat saMat::cof()
+{
+    saMat result(m_lin, m_col);
     
-    saMat saMat::col_stack(const saMat& other)
+    for (int32_t i = 0; i < m_lin; i++) 
     {
-        
-        // verificando se a col_stack eh possivel
-        if (m_lin != other.m_lin)
+        for (int32_t j = 0; j < m_col; j++) 
         {
-            printf("erro! numero de linhas nao compativeis!\n");
-            saMat mat(1, 1);
-            return mat;
+            result.set(i,j,  pow(-1., i+j)*this->redu(i,j).det());
         }
-
-        saMat mat(m_lin, m_col + other.m_col); 
-        saMat other_ = other;
-        // copiando primeira matriz
-        memcpy(mat.m_data->data(), m_data->data(), this->numel()*sizeof(double));
-        
-        // copiando segunda matriz
-        memcpy(mat.m_data->data() + other_.numel(), other.m_data->data(), this->numel()*sizeof(double));
-
-        return mat;
     }
 
-    saMat saMat::transpose(void)
-    {
-        
-        saMat mat(m_col, m_lin);
-        
-        for (int32_t i = 0; i < m_lin; i++)
-        {
-            for (int32_t j = 0; j < m_lin; j++)
-            {
-                mat.set(j,i,this->get(i,j));
-            }
-        }
+    return result;
+}
 
-        return mat;
-    }
-
-    saMat saMat::redu(int32_t px, int32_t py)
-    {
-        saMat mat(m_col-1,m_lin-1);
-        int32_t cont = 0;    
-        for (int32_t i = 0; i < m_lin; i++) 
-        {
-            if (px == i) continue;
-            for (int32_t j = 0; j < m_col; j++) 
-            {
-                if (py == j) continue;
-                mat.set(cont++, this->get(i,j));
-            }
-        }
-
-        return mat.transpose();
-
-    }
-
-    double saMat::det(void)
-    {
-        double det;
-
-        if(m_col == 1)
-        {
-            return this->get(0);
-        }
-
-        for (int32_t i = 0; i < m_col; i++)
-        {
-            det += pow(-1.0, i) * this->get(0,i) * this->redu(0,i).det();
-        }
-        
-        return det;
-    }
-
-    saMat saMat::cof(void)
-    {
-        saMat mat(m_lin, m_col);
-        double aux;
-
-        for (int32_t i = 0; i < m_lin; i++) 
-        {
-            for (int32_t j = 0; j < m_col; j++) 
-            {
-                aux = pow(-1.0, i + j) * this->redu(i,j).det();
-                this->set(i,j,aux);
-            }
-        }
-
-        return mat;
-    }
+saMat saMat::inv()
+{
+    saMat result;
     
-    saMat saMat::inv(void)
+    // calculando determinante
+    double det = this->det();
+
+    // calculando matrix adjunta
+    saMat adj = this->cof().transpose();
+
+    // calculando inversa
+    result = adj.mul(1./det);
+
+    return result;
+}
+
+double& saMat::operator[](int32_t index)
+{
+    return this->m_data[index%this->numel()];
+}
+
+saMat saMat::operator*(const saMat& other)
+{
+    return this->mul(other);
+}
+
+saMat saMat::operator*(double scalar)
+{
+    saMat result(m_lin, m_col);
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
     {
-        
-        saMat mat;
-
-        // verificando se a matriz eh quadrada
-        if (m_lin != m_col)
-        {
-            printf("erro! numero de linhas diferentes do numero de columas!\n");
-            return mat;
-        }
-
-        double det = this->det();
-        
-        // verificando se a determinante eh diferente de 0
-        if (fabs(det < 1e-15))
-        {
-            printf("erro! det(matriz) ~== 0.0!\n");
-            return mat;
-        }
-
-        this->mul(1/det).p();
-        mat = this->mul(1/det);
-
-        return mat;
+        result[i] = (*this)[i] * scalar;
     }
 
+    return result;
+}
 
-    void saMat::p(void) 
+void saMat::operator*=(double scalar)
+{
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
     {
-        printf("matrix(%d,%d):\n", m_lin, m_col);
+        (*this)[i] *= scalar;
+    }    
+}
+
+saMat saMat::operator/(double scalar)
+{
+    saMat result;
+
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
+    {
+        result[i] = (*this)[i]/scalar;
+    }  
+
+    return result;
+}
+
+void saMat::operator/=(double scalar)
+{
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
+    {
+        (*this)[i] /= scalar;
+    }  
+}
+
+saMat saMat::operator+(const saMat& other)
+{
+    return this->add(other);
+}
+
+void saMat::operator+=(const saMat& other)
+{
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
+    {
+        (*this)[i] += other.m_data[i];
+    } 
+}
+
+saMat saMat::operator-(const saMat& other)
+{
+    return this->subtract(other);
+}
+
+void saMat::operator-=(const saMat& other)
+{
+    for (int32_t i = 0; i < (int32_t)this->numel(); i++)
+    {
+        (*this)[i] -= other.m_data[i];
+    } 
+}
+
+void saMat::p()
+{
+    printf("matrix(%d,%d):\n", m_lin, m_col);
         
-        for (int32_t i = 0; i < m_lin; i++) 
+    for (int32_t i = 0; i < m_lin; i++) 
+    {
+        for (int32_t j = 0; j < m_col; j++) 
         {
-            for (int32_t j = 0; j < m_col; j++) 
-            {
-                printf("%f, ", this->get(i,j));
-            }
-            printf("\n");
+            printf("%f, ", this->get(i,j));
         }
         printf("\n");
     }
 
-    void saMat::pdata(void) 
-    {
-        printf("matrix(%d,%d).m_data:\n", m_lin, m_col);
-        
-        for(int32_t i = 0; i < this->numel(); i++) 
-        {
-            printf("%f, ", (*m_data)[i]);            
-        }
-        printf("\n\n");
+    printf("\n");
+}
 
+void saMat::p(std::string label)
+{
+    printf("matrix(%d,%d): %s\n", m_lin, m_col, label.c_str());
+        
+    for (int32_t i = 0; i < m_lin; i++) 
+    {
+        for (int32_t j = 0; j < m_col; j++) 
+        {
+            printf("%f, ", this->get(i,j));
+        }
+        printf("\n");
     }
+    printf("\n");
+}
