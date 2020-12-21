@@ -33,6 +33,7 @@ public:
     saMat mul(double scalar);
     saMat divide(double scalar);
     saMat mul(const saMat& other);
+    saMat ipow(double scalar);
 
     saMat transpose();
     saMat redu(int32_t i, int32_t j);

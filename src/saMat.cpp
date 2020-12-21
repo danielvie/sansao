@@ -130,6 +130,19 @@ saMat saMat::mul(const saMat& other)
     return result;
 }
 
+saMat saMat::ipow(double scalar)
+{
+    saMat result(m_lin, m_col);
+
+    for (int32_t i = 0; i < this->numel(); i++) 
+    {
+        result[i] = pow((*this)[i], scalar);
+    }
+
+    return result;
+}
+
+
 saMat saMat::transpose()
 {
     saMat result(m_col, m_lin);
@@ -215,7 +228,7 @@ saMat saMat::col_stack(const saMat& other)
 {
     saMat result(m_lin, m_col + other.m_col);
 
-    memcpy(result.m_data.data(), this->m_data.data(), (int32_t)this->numel()*sizeof(double));
+    memcpy(result.m_data.data(), this->m_data.data(), this->numel()*sizeof(double));
     memcpy(result.m_data.data() + this->numel(), other.m_data.data(), (other.m_lin*other.m_col)*sizeof(double));
 
     return result;
