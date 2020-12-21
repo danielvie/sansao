@@ -40,6 +40,8 @@ public:
     saMat cof();
     saMat inv();
     
+    saMat col_stack(const saMat& other);
+    
     double& operator[](int32_t index);
     
     saMat operator*(double scalar);

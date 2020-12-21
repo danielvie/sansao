@@ -10,7 +10,7 @@ saMat::saMat(int32_t m_lin_, int32_t m_col_)
 {
     for (int32_t i = 0; i < this->numel(); i++)
     {
-        m_data.push_back((double)i);
+        m_data.push_back(0.);
     }
 }
 
@@ -210,6 +210,17 @@ saMat saMat::inv()
 
     return result;
 }
+
+saMat saMat::col_stack(const saMat& other)
+{
+    saMat result(m_lin, m_col + other.m_col);
+
+    memcpy(result.m_data.data(), this->m_data.data(), (int32_t)this->numel()*sizeof(double));
+    memcpy(result.m_data.data() + this->numel(), other.m_data.data(), (other.m_lin*other.m_col)*sizeof(double));
+
+    return result;
+}
+
 
 double& saMat::operator[](int32_t index)
 {
